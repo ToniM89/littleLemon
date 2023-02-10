@@ -7,6 +7,14 @@
 
 import SwiftUI
 
+/*
+ TODOS:
+- adapt colors to all elements to match the guidlines
+- adapt text size and font to match the guidlines
+- adapt button styles and spacing
+ 
+*/
+
 struct UserProfile: View {
     
     @Environment(\.presentationMode) var presentation
@@ -26,9 +34,21 @@ struct UserProfile: View {
                 .font(.title)
             Form {
                 Section("Avatar") {
-                    Image(userImage)
-                        .resizable()
-                        .frame(width: 100, height: 100)
+                    HStack {
+                        Image(userImage)
+                            .resizable()
+                            .frame(width: 100, height: 100)
+                        Button("Restore") {
+                            userImage = "profile-image-placeholder"
+                        }
+                        .disabled(userImage != "")
+                        
+                        Button("Remove") {
+                            userImage = ""
+                        }
+                    }
+                    .buttonStyle(BorderlessButtonStyle())
+                    
                 }
                 Section("First Name*") {
                     TextField("First Name", text: $firstName)
