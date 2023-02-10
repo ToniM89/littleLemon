@@ -7,18 +7,17 @@
 
 import SwiftUI
 
-let kFirstName = "kFirstName"
-let kLastName = "kLastName"
-let kEmail = "kEmail"
-let kIsLoggedIn = "kIsLoggedIn"
+
 
 struct Onboarding: View {
     
-    @State private var firstName = ""
-    @State private var lastName = ""
-    @State private var email = ""
+    @State private var firstName = UserDefaults.standard.string(forKey: kFirstName) ?? ""
+    @State private var lastName = UserDefaults.standard.string(forKey: kLastName) ?? ""
+    @State private var email = UserDefaults.standard.string(forKey: kEmail) ?? ""
     
     @State private var isLoggedIn = false
+    
+    @State private var showingAlert = false
     
     private var filledOutAllFields: Bool {
         return !firstName.isEmpty && !lastName.isEmpty && !email.isEmpty
@@ -27,31 +26,52 @@ struct Onboarding: View {
     var body: some View {
         NavigationStack {
             VStack {
-                TextField("First Name", text: $firstName)
-                    .disableAutocorrection(true)
-                TextField("Last Name", text: $lastName)
-                    .disableAutocorrection(true)
-                TextField("Email", text: $email)
-                    .disableAutocorrection(true)
-                    .textInputAutocapitalization(.never)
+                Header(showProfileImage: false)
+                HeroView(searchText: .constant(""), showSearchbar: false)
+                Form {
+                    Section("First Name*") {
+                        TextField("First Name", text: $firstName)
+                            .disableAutocorrection(true)
+                    }
+                    Section("Last Name*") {
+                        TextField("Last Name", text: $lastName)
+                            .disableAutocorrection(true)
+                    }
+                    Section("Email*") {
+                        TextField("Email", text: $email)
+                            .disableAutocorrection(true)
+                            .textInputAutocapitalization(.never)
+                    }
+                   
+                   
+                }
+                Button {
+                    if filledOutAllFields {
+                        Profile.loginUser(firstName: firstName, lastName: lastName, email: email)
+                        isLoggedIn = true
+                    } else {
+                        showingAlert = true
+                    }
+                } label: {
+                    Text("Login in")
+                        .padding()
+                        .frame(width: 300)
+                        .background(.yellow)
+                        .foregroundColor(.white)
+                        .bold()
+                        .cornerRadius(8)
+                }
                 NavigationLink(destination: Home(), isActive: $isLoggedIn) {
                     EmptyView()
                 }
-                Button("Register") {
-                    if(filledOutAllFields) {
-                        UserDefaults.standard.set(firstName, forKey: kFirstName)
-                        UserDefaults.standard.set(lastName, forKey: kLastName)
-                        UserDefaults.standard.set(email, forKey: kEmail)
-                        UserDefaults.standard.set(true, forKey: kIsLoggedIn)
-                        isLoggedIn = true
-                    } else {
-                        print("Please fill out all fields...")
-                    }
-                }
+
+                Spacer()
             }
-            .padding()
             .onAppear {
                 isLoggedIn = UserDefaults.standard.bool(forKey: kIsLoggedIn)
+            }
+            .alert("Important message", isPresented: $showingAlert) {
+                       Button("OK", role: .cancel) { }
             }
         }
     }

@@ -9,27 +9,23 @@ import SwiftUI
 
 struct Menu: View {
     @Environment(\.managedObjectContext) private var viewContext
-    
     @State private var dataLoaded = false
+    @State private var searchText = ""
+    @State private var showedCategory: MenuCategory = .all
     
     var body: some View {
         VStack {
-            Text("Little lemon")
-            Text("Chicago")
-            Text("TODO: Place short description here.")
-            FetchedObjects() { (dishes: [Dish]) in
+            Header(showProfileImage: true)
+            HeroView(searchText: $searchText)
+            MenuBreakdown(category: $showedCategory)
+            FetchedObjects(predicate: buildPredicate(), sortDescriptors: buildSortDescriptors()) { (dishes: [Dish]) in
                 List {
-                    ForEach(dishes, id: \.self) { dish in
-                        HStack {
-                            Text("\(dish.title ?? "No name dish") \(dish.price ?? "0.00")")
-                            Spacer()
-                            AsyncImage(url: URL(string: dish.image!)) { image in
-                                image.resizable()
-                                    .clipShape(Circle())
-                            } placeholder: {
-                                ProgressView()
-                            }
-                            .frame(width: 50, height: 50)
+                    if dishes.count == 0 {
+                        Text("Sorry, we currently don't serve a menu item with your search terms :(")
+                            .bold()
+                    } else {
+                        ForEach(dishes, id: \.self) { dish in
+                            MenuItemView(dish: dish)
                         }
                     }
                 }
@@ -40,11 +36,10 @@ struct Menu: View {
                 dataLoaded = true
                 getMenuData()
             }
-                    }
+        }
     }
     
     func getMenuData() {
-        
         // clear database befor loading new data into it
         PersistenceController.shared.clear()
         
@@ -61,13 +56,36 @@ struct Menu: View {
                         dish.title = menuItem.title
                         dish.image = menuItem.image
                         dish.price = menuItem.price
+                        dish.detailText = menuItem.detailText
+                        dish.category = menuItem.category
+                        
                     }
                     try? viewContext.save()
+                } else {
+                    print("Data couldn't be interpreted")
                 }
             }
         }
         request.resume()
-        
+    }
+    
+    func buildSortDescriptors() -> [NSSortDescriptor] {
+        return [
+            NSSortDescriptor(key: "title", ascending: true, selector: #selector(NSString.localizedStandardCompare))
+        ]
+    }
+    
+    func buildPredicate() -> NSPredicate {
+        if showedCategory == .all {
+            if searchText.isEmpty {
+                return NSPredicate(value: true)
+            }
+            return NSPredicate(format: "title CONTAINS[cd] %@", searchText)
+        }
+        if searchText.isEmpty {
+            return NSPredicate(format: "category CONTAINS[cd] %@", showedCategory.rawValue)
+        }
+        return NSPredicate(format: "category CONTAINS[cd] %@ AND title CONTAINS[cd] %@", showedCategory.rawValue, searchText)
     }
 }
 
