@@ -7,14 +7,6 @@
 
 import SwiftUI
 
-/*
- TODOS:
-- adapt colors to all elements to match the guidlines
-- adapt text size and font to match the guidlines
-- adapt button styles and spacing
- 
-*/
-
 struct UserProfile: View {
     
     @Environment(\.presentationMode) var presentation
@@ -38,13 +30,26 @@ struct UserProfile: View {
                         Image(userImage)
                             .resizable()
                             .frame(width: 100, height: 100)
-                        Button("Restore") {
+                        Button {
                             userImage = "profile-image-placeholder"
+                        } label: {
+                            Text("Restore")
+                                .padding()
+                                .background(.primary1)
+                                .foregroundColor(.white)
+                                .lineLimit(1)
+                                .cornerRadius(8)
                         }
                         .disabled(userImage != "")
-                        
-                        Button("Remove") {
+                        Button {
                             userImage = ""
+                        } label: {
+                            Text("Remove")
+                                .padding()
+                                .background(.white)
+                                .foregroundColor(.secondary4)
+                                .border(.secondary4)
+                                .lineLimit(1)
                         }
                     }
                     .buttonStyle(BorderlessButtonStyle())
@@ -86,14 +91,18 @@ struct UserProfile: View {
                 Profile.logOutUser()
                 self.presentation.wrappedValue.dismiss()
             } label: {
-                Text("Log out")
-                    .padding()
-                    .frame(width: 300)
-                    .background(.yellow)
-                    .foregroundColor(.white)
-                    .bold()
-                    .cornerRadius(8)
+                HStack {
+                    Spacer()
+                    Text("Log out")
+                    Spacer()
+                }
+                .padding()
+                .background(.yellow)
+                .foregroundColor(.white)
+                .bold()
+                .cornerRadius(8)
             }
+            .padding(.horizontal)
             HStack {
                 Button {
                     firstName = UserDefaults.standard.string(forKey: kFirstName) ?? ""
@@ -104,9 +113,10 @@ struct UserProfile: View {
                 } label: {
                     Text("Discard changes")
                         .padding()
+                        .foregroundColor(.secondary4)
                         .overlay(
                             RoundedRectangle(cornerRadius: 8)
-                                .stroke(.black, lineWidth: 1)
+                                .stroke(.secondary4, lineWidth: 1)
                         )
                 }
                 Button {
@@ -115,7 +125,8 @@ struct UserProfile: View {
                 } label: {
                     Text("Save change")
                         .padding()
-                        .background(.green)
+                        .background(.primary1)
+                        .foregroundColor(.white)
                         .cornerRadius(8)
                 }
             }

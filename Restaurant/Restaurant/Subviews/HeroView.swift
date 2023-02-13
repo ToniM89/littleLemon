@@ -15,13 +15,16 @@ struct HeroView: View {
     var body: some View {
         VStack(alignment: .leading) {
             Text("Little Lemon")
-                .foregroundColor(.yellow)
-                .font(.title)
+                .foregroundColor(.primary2)
+                .font(.custom("Markazi Text", size: 42))
             Text("Chicago")
                 .foregroundColor(.white)
-                .font(.headline)
+                .font(.custom("Markazi Text", size: 32))
+                .padding(.bottom, -80)
             HStack {
-                Text("Das ist ein sehr langer Text den man auf meheren Zeilen anzeigen muss das ist aber auch Kein Problem, weil das von alleine passiert, da ist swift sehr schlau. Bevor man das abgibt muss man den text aber noch anapassen.")
+                Text("We are a family owned Mediterranean restaurant, focused on traditional recipes served with a modern twist.")
+                    .foregroundColor(.white)
+                    .font(.custom("Karla", size: 16))
                 Image("HeroImage")
                     .resizable()
                     .scaledToFit()
@@ -44,9 +47,10 @@ struct HeroView: View {
             }
         }
         .padding()
-        .background(.green)
+        .background(.primary1)
     }
 }
+
 
 struct HeroView_Previews: PreviewProvider {
     static var previews: some View {

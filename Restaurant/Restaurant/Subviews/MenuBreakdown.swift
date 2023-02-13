@@ -12,7 +12,7 @@ struct MenuBreakdown: View {
     @Binding var category: MenuCategory
     
     var body: some View {
-        VStack {
+        VStack(alignment: .leading) {
             Text("Order for delivery!")
                 .bold()
                 .textCase(.uppercase)
@@ -27,7 +27,8 @@ struct MenuBreakdown: View {
                                 .font(.callout)
                                 .padding()
                                 .padding(.horizontal)
-                                .background(.gray)
+                                .foregroundColor(.white)
+                                .background(.secondary4)
                                 .clipShape(Capsule())
                                 .lineLimit(1)
                         }
@@ -36,6 +37,7 @@ struct MenuBreakdown: View {
                 
             }
         }
+        .padding(.horizontal, 5)
     }
 }
 
